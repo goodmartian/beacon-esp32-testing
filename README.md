@@ -1,83 +1,90 @@
-# ESP32 Beacon Mesh Node - Enhanced Test Firmware
+# ESP32 Beacon Mesh Node - Test Firmware
 
-Расширенная тестовая прошивка для ESP32 с автоматическими уведомлениями, симуляцией сенсоров и эмуляцией mesh relay.
+Test firmware for ESP32 with automatic notifications, sensor simulation, and mesh relay emulation.
 
-## Новые возможности
+## About This Project
 
-✅ **Автоматические уведомления** - каждые 10 сек отправка тестовых данных
-✅ **Симуляция сенсоров** - батарея, RSSI, температура, влажность
-✅ **Тестовые команды** - GET_STATUS, SEND_SOS, ENABLE/DISABLE_AUTO
-✅ **Mesh relay эмуляция** - симуляция передачи через mesh сеть
-✅ **JSON формат** - все данные в JSON для тестирования парсинга
-✅ **Подробное логирование** - детальная информация в Serial Monitor
+This firmware is designed for testing the **Beacon** mobile application - a mesh network emergency communication system. The ESP32 acts as a BLE beacon node to validate mobile app functionality, BLE communication, and mesh network protocols.
 
-## Требования
+- **Main Project**: [github.com/goodmartian/beacon](https://github.com/goodmartian/beacon)
+- **Project Website**: [goodmartian.github.io/beacon-site](https://goodmartian.github.io/beacon-site/)
 
-- ESP32 DevKit (WROOM-32 или аналог)
+## Features
+
+✅ **Automatic notifications** - Test data broadcast every 10 seconds
+✅ **Sensor simulation** - Battery, RSSI, temperature, humidity
+✅ **Test commands** - GET_STATUS, SEND_SOS, ENABLE/DISABLE_AUTO
+✅ **Mesh relay emulation** - Simulates mesh network message forwarding
+✅ **JSON format** - All data in JSON for parsing validation
+✅ **Detailed logging** - Comprehensive Serial Monitor output
+
+## Requirements
+
+- ESP32 DevKit (WROOM-32 or compatible)
 - PlatformIO
-- USB Micro кабель
+- USB Micro cable
 
-## Быстрый старт
+## Quick Start
 
-### 1. Подключите ESP32 к ноутбуку
+### 1. Connect ESP32 to Computer
 
 ```bash
-# Проверьте подключение
+# Verify connection
 ls /dev/ttyUSB* /dev/ttyACM*
 ```
 
-### 2. Соберите и загрузите прошивку
+### 2. Build and Upload Firmware
 
 ```bash
 cd esp32-firmware
 platformio run --target upload
 ```
 
-### 3. Откройте Serial Monitor
+### 3. Open Serial Monitor
 
 ```bash
 platformio device monitor
 ```
 
-## Конфигурация
+## Configuration
 
-Отредактируйте `src/main.cpp` для настройки:
+Edit `src/main.cpp` to configure:
 
 ```cpp
-#define DEVICE_NAME "BEACON-NODE-001"  // Имя устройства
-#define SERVICE_UUID "..."              // UUID сервиса (из Flutter app)
+#define DEVICE_NAME "BEACON-NODE-001"  // Device name
+#define SERVICE_UUID "..."              // Service UUID (from Flutter app)
 ```
 
 ## UUID Mapping
 
-UUID должны совпадать с Flutter приложением (`lib/core/constants/ble_constants.dart`):
+UUIDs must match the Flutter application (`lib/core/constants/ble_constants.dart`):
 
 - **Service UUID**: `0000180a-0000-1000-8000-00805f9b34fb`
 - **Message Characteristic**: `00002a58-0000-1000-8000-00805f9b34fb`
 - **Device ID Characteristic**: `00002a29-0000-1000-8000-00805f9b34fb`
 
-## Индикация LED
+## LED Indicators
 
-- **Быстрое мигание (5 раз)**: Инициализация завершена
-- **Постоянно горит**: Устройство подключено
-- **3 быстрых мигания**: Получено сообщение
-- **Короткая вспышка раз в 2 сек**: Ожидание подключения
+- **Fast blink (5 times)**: Initialization complete
+- **Solid on**: Device connected
+- **3 fast blinks**: Message received
+- **Single flash every 2 sec**: Waiting for connection
 
-## Тестовые команды
+## Test Commands
 
-Отправляйте текстовые команды из Flutter приложения:
+Send text commands from the Flutter app:
 
-| Команда | Описание | Ответ |
-|---------|----------|-------|
-| `GET_STATUS` | Получить статус устройства | JSON с battery, rssi, messages, relays, uptime |
-| `SEND_SOS` | Сгенерировать SOS сообщение | JSON с type:SOS, координатами, timestamp |
-| `ENABLE_AUTO` | Включить автоматические уведомления | Подтверждение в Serial |
-| `DISABLE_AUTO` | Выключить автоматические уведомления | Подтверждение в Serial |
-| `RESET_STATS` | Сбросить счетчики | Сброс messageCounter и relayCounter |
+| Command | Description | Response |
+|---------|-------------|----------|
+| `GET_STATUS` | Get device status | JSON with battery, rssi, messages, relays, uptime |
+| `SEND_SOS` | Generate SOS message | JSON with type:SOS, coordinates, timestamp |
+| `ENABLE_AUTO` | Enable automatic notifications | Confirmation in Serial |
+| `DISABLE_AUTO` | Disable automatic notifications | Confirmation in Serial |
+| `RESET_STATS` | Reset counters | Reset messageCounter and relayCounter |
 
-## Формат автоматических уведомлений
+## Automatic Notification Format
 
-Каждые 10 секунд (при включенном режиме):
+Every 10 seconds (when enabled):
 
 ```json
 {
@@ -92,7 +99,7 @@ UUID должны совпадать с Flutter приложением (`lib/cor
 }
 ```
 
-## Формат GET_STATUS ответа
+## GET_STATUS Response Format
 
 ```json
 {
@@ -106,7 +113,7 @@ UUID должны совпадать с Flutter приложением (`lib/cor
 }
 ```
 
-## Формат SEND_SOS ответа
+## SEND_SOS Response Format
 
 ```json
 {
@@ -119,61 +126,61 @@ UUID должны совпадать с Flutter приложением (`lib/cor
 }
 ```
 
-## Тестирование
+## Testing Workflow
 
-1. Загрузите прошивку на ESP32
-2. Откройте Serial Monitor: `platformio device monitor`
-3. Откройте Beacon app на смартфоне
-4. Найдите "BEACON-NODE-001" через BLE scan
-5. Подключитесь к устройству
-6. Отправьте команды из приложения
-7. Наблюдайте автоматические уведомления каждые 10 сек
-8. Проверяйте подробные логи в Serial Monitor
+1. Upload firmware to ESP32
+2. Open Serial Monitor: `platformio device monitor`
+3. Open Beacon app on smartphone
+4. Find "BEACON-NODE-001" via BLE scan
+5. Connect to device
+6. Send commands from app
+7. Observe automatic notifications every 10 seconds
+8. Check detailed logs in Serial Monitor
 
 ## Troubleshooting
 
-### ESP32 не определяется
+### ESP32 Not Detected
 
 ```bash
-# Добавьте пользователя в группу dialout
+# Add user to dialout group
 sudo usermod -a -G dialout $USER
-# Перезайдите в систему
+# Logout and login again
 ```
 
-### Ошибка загрузки
+### Upload Error
 
-Зажмите кнопку BOOT на ESP32 при загрузке прошивки.
+Press and hold the BOOT button on ESP32 during firmware upload.
 
-## Прошивка нескольких ESP32 для mesh тестирования
+## Multiple ESP32 Nodes for Mesh Testing
 
-Для тестирования mesh сети с несколькими узлами:
+To test mesh network with multiple nodes:
 
-### Узел 2
+### Node 2
 ```cpp
 #define DEVICE_NAME "BEACON-NODE-002"
 ```
 
-### Узел 3
+### Node 3
 ```cpp
 #define DEVICE_NAME "BEACON-NODE-003"
 ```
 
-**Процесс:**
-1. Отредактируйте `DEVICE_NAME` в `src/main.cpp`
-2. Соберите: `platformio run`
-3. Подключите второй ESP32
-4. Загрузите: `platformio run --target upload`
-5. Повторите для третьего узла
+**Process:**
+1. Edit `DEVICE_NAME` in `src/main.cpp`
+2. Build: `platformio run`
+3. Connect second ESP32
+4. Upload: `platformio run --target upload`
+5. Repeat for third node
 
-**Тестирование mesh:**
-- Подключите приложение к NODE-001
-- Отправьте сообщение
-- NODE-001 эмулирует relay в Serial Monitor
-- Переподключитесь к NODE-002/003 для тестирования
+**Mesh Testing:**
+- Connect app to NODE-001
+- Send message
+- NODE-001 emulates relay in Serial Monitor
+- Reconnect to NODE-002/003 for testing
 
-## Мониторинг нескольких устройств
+## Monitoring Multiple Devices
 
-Для параллельного мониторинга нескольких ESP32:
+For parallel monitoring of multiple ESP32 devices:
 
 ```bash
 # Terminal 1
@@ -186,12 +193,16 @@ platformio device monitor --port /dev/ttyUSB1
 platformio device monitor --port /dev/ttyUSB2
 ```
 
-## Симуляция данных
+## Data Simulation
 
-Прошивка автоматически симулирует:
+Firmware automatically simulates:
 
-- **Батарея**: Снижается с 100% до 10%, затем сброс
-- **RSSI**: Случайные значения от -80 до -30 dBm
-- **Температура**: 15-25°C с вариацией
-- **Влажность**: 30-70% с вариацией
-- **Счетчики**: messageCounter, relayCounter
+- **Battery**: Decreases from 100% to 10%, then resets
+- **RSSI**: Random values from -80 to -30 dBm
+- **Temperature**: 15-25°C with variation
+- **Humidity**: 30-70% with variation
+- **Counters**: messageCounter, relayCounter
+
+## License
+
+MIT
